@@ -1,6 +1,8 @@
-def main():
-    print("Hello from text2text!")
+from dotenv import load_dotenv
 
+load_dotenv()
 
-if __name__ == "__main__":
-    main()
+from langchain_openai.chat_models import ChatOpenAI
+
+llm = ChatOpenAI()
+print(llm.invoke("Hello"))
