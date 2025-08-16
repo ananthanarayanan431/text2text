@@ -1,5 +1,6 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -8,12 +9,21 @@ class Settings(BaseSettings):
     )
 
     GROQ_API_KEY: str
+    OPENAI_API_KEY: str
 
-    TEXT_GENERATION_MODEL: Literal['openai','groq'] = "openai"
+    QDRANT_API_KEY: str | None
+    QDRANT_URL: str | None = "http://localhost:6333"
+    QDRANT_PORT: str = "6333"
+    QDRANT_HOST: str | None = None
+
+    TEXT_GENERATION_MODEL: Literal["openai", "groq"] = "groq"
     GROQ_TEXT_MODEL_NAME: str = "llama-3.3-70b-versatile"
     OPENAI_TEXT_MODEL_NAME: str = "gpt-4o-mini"
 
-    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    GROQ_SMALL_TEXT_MODEL_NAME: str = "gemma2-9b-it"
+    OPENAI_SMALL_TEXT_MODEL_NAME: str = "gpt-4o-mini"
+
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-large"
     GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-exp-03-07"
 
     MEMORY_TOP_K: int = 3

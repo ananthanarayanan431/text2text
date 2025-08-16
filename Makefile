@@ -20,3 +20,18 @@ format-check:
 
 lint-check:
 	uv run ruff check $(CHECK_DIRS)
+
+softrate-build:
+	docker compose build
+
+softrate-run:
+	docker compose up --build -d
+
+softrate-stop:
+	docker compose stop
+
+softrate-delete:
+	@if [ -d "long_term_memory" ]; then rm -rf long_term_memory; fi
+	@if [ -d "short_term_memory" ]; then rm -rf short_term_memory; fi
+	@if [ -d "generated_images" ]; then rm -rf generated_images; fi
+	docker compose down

@@ -1,28 +1,20 @@
+import re
 
-import re 
-
-from dotenv import load_dotenv
+from langchain_core.output_parsers import StrOutputParser
+from langchain_groq.chat_models import ChatGroq
+from langchain_openai.chat_models import ChatOpenAI
 
 from softrate.setting import setting
 
-from langchain_core.output_parsers import StrOutputParser
-from langchain_openai.chat_models import ChatOpenAI
-from langchain_groq.chat_models import ChatGroq
 
-def get_chat_model(temperature: float = 0.6)-> ChatOpenAI | ChatGroq:
-
-    if setting.TEXT_GENERATION_MODEL=="openai":
-        return ChatOpenAI(
-            model=setting.OPENAI_TEXT_MODEL_NAME,
-            temperature=temperature
-        )
+def get_chat_model(temperature: float = 0.6) -> ChatOpenAI | ChatGroq:
+    if setting.TEXT_GENERATION_MODEL == "openai":
+        return ChatOpenAI(model=setting.OPENAI_TEXT_MODEL_NAME, temperature=temperature)
     else:
-        return ChatGroq(
-            model=setting.GROQ_TEXT_MODEL_NAME,
-            temperature=temperature
-        )
+        return ChatGroq(model=setting.GROQ_TEXT_MODEL_NAME, temperature=temperature)
 
-def remover_asterisk_content(text: str)->str:
+
+def remover_asterisk_content(text: str) -> str:
     """Remove content between asterisks in the text."""
 
     return re.sub(r"\*.*?\*", "", text).strip()

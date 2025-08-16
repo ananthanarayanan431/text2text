@@ -14,3 +14,8 @@ wheels/
 .mypy_cache
 
 .ruff_cache
+
+.long_term_memory
+
+.short_term_memory
+

@@ -1,7 +1,7 @@
 import os
 
-from langfuse import Langfuse
 from dotenv import load_dotenv
+from langfuse import Langfuse
 
 load_dotenv()
 
@@ -22,5 +22,5 @@ class langfuse_prompt:
         try:
             prompt = langfuse_conn.get_prompt(prompt_name, label=label)
             return prompt.prompt
-        except Exception as e:
+        except Exception:
             return None
