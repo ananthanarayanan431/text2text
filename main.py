@@ -25,7 +25,9 @@ load_dotenv()
 
 class ChatRequest(BaseModel):
     message: str = Field(..., description="User message to the chatbot")
-    thread_id: Union[int, str] = Field(1, description="Thread identifier for conversation state")
+    thread_id: Union[int, str] = Field(
+        1, description="Thread identifier for conversation state"
+    )
 
 
 class ChatResponse(BaseModel):
@@ -54,11 +56,11 @@ def _ensure_db_dir(path: str) -> str:
     db_path = Path(path)
     if db_path.parent and not db_path.parent.exists():
         db_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     # If the path is absolute and doesn't exist, try to create a local alternative
-    if path.startswith('/') and not Path(path).parent.exists():
+    if path.startswith("/") and not Path(path).parent.exists():
         # Create a local data directory instead
-        local_path = Path('./data/memory.db')
+        local_path = Path("./data/memory.db")
         local_path.parent.mkdir(parents=True, exist_ok=True)
         return str(local_path)
     return path
@@ -71,16 +73,16 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponse:
 
         async with AsyncSqliteSaver.from_conn_string(db_path) as short_term_memory:
             graph = create_workflow().compile(checkpointer=short_term_memory)
-            
+
             # Initialize the state with proper message structure
             initial_state = {
                 "messages": [HumanMessage(content=payload.message)],
                 "summary": "",
                 "current_activity": "",
                 "apply_activity": False,
-                "memory_context": ""
+                "memory_context": "",
             }
-            
+
             state = await graph.ainvoke(
                 initial_state,
                 {"configurable": {"thread_id": payload.thread_id}},
@@ -89,10 +91,14 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponse:
         # Best-effort retrieval of latest AI response
         messages = state.get("messages", [])
         if not messages:
-            raise HTTPException(status_code=500, detail="No messages returned from the workflow")
-        
+            raise HTTPException(
+                status_code=500, detail="No messages returned from the workflow"
+            )
+
         # Find the last AI message
-        ai_messages = [msg for msg in messages if hasattr(msg, 'content') and msg.type == 'ai']
+        ai_messages = [
+            msg for msg in messages if hasattr(msg, "content") and msg.type == "ai"
+        ]
         if ai_messages:
             response_text = ai_messages[-1].content
         else:
@@ -111,7 +117,9 @@ async def chat_endpoint(payload: ChatRequest) -> ChatResponse:
     except HTTPException:
         raise
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=500, detail=f"Chat processing failed: {exc}") from exc
+        raise HTTPException(
+            status_code=500, detail=f"Chat processing failed: {exc}"
+        ) from exc
 
 
 if __name__ == "__main__":

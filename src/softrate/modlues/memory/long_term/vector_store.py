@@ -48,7 +48,7 @@ class VectorStore:
         if cls._model is None or cls._client is None:
             cls._validate_env_vars()
             cls._model = OpenAIEmbeddings(model=setting.OPENAI_EMBEDDING_MODEL)
-            
+
             # Handle API key - if it's None, empty, or "None" string, don't pass it
             api_key = setting.QDRANT_API_KEY
             if api_key is None or api_key == "" or str(api_key).lower() == "none":

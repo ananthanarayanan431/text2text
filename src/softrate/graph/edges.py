@@ -1,4 +1,3 @@
-
 from softrate.graph.constant import Conversation, GraphNode
 from softrate.graph.state import Softrate
 from softrate.setting import setting

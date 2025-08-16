@@ -1,13 +1,12 @@
-
 from langchain_core.messages import AIMessage, HumanMessage, RemoveMessage
 from langchain_core.runnables import RunnableConfig
 
 from softrate.graph.constant import Conversation
 from softrate.graph.state import Softrate
-from softrate.graph.utils.helpers import get_chat_model
 from softrate.graph.utils.chains import get_softrate_response_chain
-from softrate.modlues.schedules.context_generation import scheduleContextGeneration
+from softrate.graph.utils.helpers import get_chat_model
 from softrate.modlues.memory.long_term.memory_manager import get_memory_manager
+from softrate.modlues.schedules.context_generation import scheduleContextGeneration
 from softrate.setting import setting
 
 
@@ -40,11 +39,11 @@ async def conversation_node(state: Softrate, config: RunnableConfig) -> Softrate
         },
         config,
     )
-    
+
     # Ensure messages is always a list and append the new response
     if not isinstance(state[Conversation.MESSAGES], list):
         state[Conversation.MESSAGES] = []
-    
+
     # Append the new AI response to the messages list
     state[Conversation.MESSAGES].append(AIMessage(content=response))
     return state
@@ -72,12 +71,15 @@ async def summarize_conversation_node(state: Softrate) -> Softrate:
     current_messages = state[Conversation.MESSAGES]
     if not isinstance(current_messages, list):
         current_messages = []
-    
+
     messages = current_messages + [HumanMessage(content=summary_message)]
     response = await model.ainvoke(messages)
 
     # Only try to delete messages if we have enough
-    if isinstance(current_messages, list) and len(current_messages) > setting.TOTAL_MESSAGES_AFTER_SUMMARY:
+    if (
+        isinstance(current_messages, list)
+        and len(current_messages) > setting.TOTAL_MESSAGES_AFTER_SUMMARY
+    ):
         delete_messages = [
             RemoveMessage(id=m.id)
             for m in current_messages[: -setting.TOTAL_MESSAGES_AFTER_SUMMARY]
@@ -85,7 +87,7 @@ async def summarize_conversation_node(state: Softrate) -> Softrate:
         state[Conversation.MESSAGES] = delete_messages
     else:
         state[Conversation.MESSAGES] = []
-    
+
     state[Conversation.SUMMARY] = response.content
     return state
 
